@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspadinha Virtual Realista</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #raspadinha-container {
+            position: relative;
+            width: 900px;
+            height: 450px;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2>Raspadinha Virtual Realista</h2>
+    <div id="raspadinha-container">
+        <!-- Imagem de fundo -->
+        <img src="premio10f.png" alt="Prêmio">
+        <!-- Canvas para criar a camada superior -->
+        <canvas id="raspadinha"></canvas>
+    </div>
+    <script>
+        // Configuração inicial
+        const canvas = document.getElementById('raspadinha');
+        const ctx = canvas.getContext('2d');
+
+        // Ajustar o tamanho do canvas para coincidir com o container
+        const container = document.getElementById('raspadinha-container');
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+
+        // Desenhar a camada superior (capa da raspadinha)
+        const capa = new Image();
+        capa.src = 'capaf.png'; // Imagem de cobertura
+        capa.onload = () => {
+            ctx.drawImage(capa, 0, 0, canvas.width, canvas.height);
+        };
+
+        // Detectar interação do mouse ou toque
+        let isDrawing = false;
+
+        const clearArea = (x, y) => {
+            ctx.globalCompositeOperation = 'destination-out'; // Apagar a camada superior
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, Math.PI * 2, false); // Cria um círculo
+            ctx.fill();
+        };
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            clearArea(x, y);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawing) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                clearArea(x, y);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        // Suporte para telas sensíveis ao toque
+        canvas.addEventListener('touchstart', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.touches[0].clientX - rect.left;
+            const y = e.touches[0].clientY - rect.top;
+            clearArea(x, y);
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (isDrawing) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.touches[0].clientX - rect.left;
+                const y = e.touches[0].clientY - rect.top;
+                clearArea(x, y);
+            }
+        });
+
+        canvas.addEventListener('touchend', () => {
+            isDrawing = false;
+        });
+    </script>
+</body>
+</html>
